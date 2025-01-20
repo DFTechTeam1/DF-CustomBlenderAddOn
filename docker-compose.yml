@@ -1,7 +1,7 @@
 services:
   ollama:
     container_name: ollama
-    image: ollama/ollama:latest
+    image: ollama/ollama:${OLLAMA_VERSION}
     pull_policy: always
     ports:
       - 11434:11434
