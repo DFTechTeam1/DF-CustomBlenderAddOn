@@ -4,14 +4,6 @@
 HOST="127.0.0.1"
 ENV_FILE="env/.env.development"
 
-# Checking for existing processes on port 8000
-echo "Checking for existing processes on port 8000"
-PIDS=$(lsof -ti :8000)
-if [ -n "$PIDS" ]; then
-  echo "Killing existing processes on port 8000"
-  kill -9 $PIDS
-fi
-
 # Show usage information
 show_help() {
   echo "Usage: sh $0 [ --development | --staging | --production | --help ]"
@@ -63,7 +55,7 @@ case "$1" in
 esac
 
 #Load the environment variables using the external script
-export $(grep -v '^#' $ENV_FILE | xargs)
+export ENV_FILE
 sh ./scripts/load_env.sh
 
 # Activate virtualenv
