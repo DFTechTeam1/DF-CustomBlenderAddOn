@@ -5,7 +5,7 @@ from src.schema.response import ServerStatus
 router = APIRouter(tags=["Root"])
 
 
-async def root() -> ServerStatus:
+async def health_check_endpoint() -> ServerStatus:
     logging.info("Endpoint Root.")
     response = ServerStatus()
     response.status = "Server running!"
@@ -15,7 +15,7 @@ async def root() -> ServerStatus:
 router.add_api_route(
     methods=["GET"],
     path="/",
-    endpoint=root,
+    endpoint=health_check_endpoint,
     summary="Health check.",
     response_model=ServerStatus,
 )

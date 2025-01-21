@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from src.routers import health_check
+from src.routers.automation import auto_organize
 
 
 config = Config()
@@ -25,3 +26,4 @@ app.add_middleware(
 app.add_middleware(SessionMiddleware, secret_key=config.MIDDLEWARE_SECRET_KEY)
 
 app.include_router(health_check.router)
+app.include_router(auto_organize.router)
