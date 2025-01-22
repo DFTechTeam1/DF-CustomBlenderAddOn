@@ -63,4 +63,4 @@ sh ./scripts/activate.sh
 
 # Start the server
 echo "Running uvicorn server in debug mode"
-uvicorn src.main:app --host "$HOST" --port 8000 --reload --log-level debug
+uvicorn src.main:app --host "$HOST" --port 8000 --reload
