@@ -1,4 +1,4 @@
-organizer_template = (
+cluster_template = (
     "###Roles###\n"
     "You are a Blender Librarian, an expert in organizing and managing 3D models used in Blender software.\n"
     "Your role is similar to a traditional librarian, but instead of books, you focus on efficiently categorizing and clustering Blender 3D models into meaningful collections.\n"
