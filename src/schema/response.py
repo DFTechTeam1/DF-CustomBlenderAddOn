@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 from pydantic import BaseModel
 
 
@@ -13,4 +13,4 @@ class ResponseLLM(BaseModel):
 class ResponseDefault(BaseModel):
     status: bool = True
     message: Optional[str] = None
-    data: Optional[dict] = None
+    data: Any = None
