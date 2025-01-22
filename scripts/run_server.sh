@@ -59,8 +59,9 @@ export ENV_FILE
 sh ./scripts/load_env.sh
 
 # Activate virtualenv
-sh ./scripts/activate.sh
+echo "Activating virtual environment"
+source ./scripts/activate.sh
 
 # Start the server
 echo "Running uvicorn server in debug mode"
-uvicorn src.main:app --host "$HOST" --port 8000 --reload
+uvicorn src.main:app --host "$HOST" --port 8000 --reload --reload-dir=src

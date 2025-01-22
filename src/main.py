@@ -12,8 +12,8 @@ config = Config()
 
 app = FastAPI(
     root_path="/api/v1",
-    title="Custom Blender Add-Ons Backend Application",
-    description="Backend application for Custom Blender.",
+    title="DFactory Custom Blender Add-Ons Backend Application",
+    description="Backend application for DFactory Custom Blender.",
     version="1.0.0",
 )
 

@@ -3,6 +3,7 @@ services:
     container_name: ollama
     image: ollama/ollama:${OLLAMA_VERSION}
     pull_policy: always
+    restart: always
     ports:
       - 11434:11434
     environment:
