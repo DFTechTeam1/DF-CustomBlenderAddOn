@@ -20,6 +20,7 @@ class CustomOllama:
         self.self_end_time: Optional[datetime] = None
 
     def to_str(self, data: list) -> str:
+        logging.info(f"Clustering {len(data)} object.")
         return str(data)
 
     def prompt(self, custom_template: str, **kwargs: Any) -> str:

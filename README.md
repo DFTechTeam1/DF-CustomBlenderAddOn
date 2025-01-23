@@ -31,7 +31,7 @@ This project is developed using Windows 11 with Python v3.12.3. To get started, 
 
 ## Prerequisites
 
-- **Python** (Recomenddation: 3.12.3)
+- **Python** (Recomendation: 3.12.3)
 - **Docker**
 - **Poetry**
 

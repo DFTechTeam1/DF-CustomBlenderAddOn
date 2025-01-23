@@ -58,7 +58,7 @@ cluster_template = (
     "    'sofa.001',\n"
     "    'table.001'\n"
     "]\n\n"
-    "Expected output:\n"
+    "Sample expected output:\n"
     "{{\n"
     "    'structure': [\n"
     "        'pillar_top.001',\n"

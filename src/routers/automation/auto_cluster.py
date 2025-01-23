@@ -12,7 +12,7 @@ router = APIRouter(tags=["Automation"], prefix="/auto")
 async def auto_cluster_endpoint(schema: ModelData) -> ResponseDefault:
     logging.info("Endpoint Auto Organize 3D Models.")
     response = ResponseDefault()
-    ollama = CustomOllama(temperature=0.15)
+    ollama = CustomOllama(temperature=schema.temperature)
 
     try:
         formatted_data = ollama.to_str(data=schema.model)
