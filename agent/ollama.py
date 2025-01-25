@@ -1,11 +1,11 @@
 from ollama import chat
-from datetime import datetime
+from typing import Any, Union
+from pydantic import BaseModel
 from utils.logger import logging
-from typing import Optional, Any
 from utils.helper import local_time
 from utils.error import ServiceError
 from langchain_core.prompts import PromptTemplate
-from src.schema.response import ResponseLLM
+from src.schema.response import ResponseCluster3DModel, ResponsePythonCodeGenerator
 
 
 class CustomOllama:
@@ -16,8 +16,8 @@ class CustomOllama:
     ):
         self.temperature = temperature
         self.model_name = model_name
-        self.start_time: Optional[datetime] = None
-        self.self_end_time: Optional[datetime] = None
+        self.start_time = None
+        self.self_end_time = None
 
     def to_str(self, data: list) -> str:
         logging.info(f"Clustering {len(data)} object.")
@@ -27,25 +27,36 @@ class CustomOllama:
         prompt = PromptTemplate.from_template(template=custom_template)
         return prompt.format(**kwargs)
 
-    async def cluster_models(self, custom_prompt: str) -> dict:
+    async def execute(
+        self,
+        custom_prompt: str,
+        response_model: type[BaseModel],
+    ) -> Union[dict, str]:
         try:
-            start_time = local_time()
-            logging.info("Starting clustering process.")
+            self.start_time = local_time()
+            logging.info("Starting LLM process.")
 
             response = chat(
                 messages=[{"role": "user", "content": custom_prompt}],
                 model=self.model_name,
-                format=ResponseLLM.model_json_schema(),
+                format=response_model.model_json_schema(),
                 options={"temperature": self.temperature},
             )
 
-            result = ResponseLLM.model_validate_json(response.message.content)
+            result = response_model.model_validate_json(response.message.content)
 
-            end_time = local_time()
-            logging.info("Finished clustering proceess.")
-            logging.info(f"Elapsed time: {end_time-start_time}")
+            if response_model is ResponsePythonCodeGenerator:
+                return result.data.strip()
+            elif response_model is ResponseCluster3DModel:
+                return result.data
+            else:
+                raise ValueError("Unsupported response model type.")
+
         except Exception as e:
-            logging.error(f"Error clustering 3D models: {e}")
+            logging.error(f"Error LLM: {e}")
             raise ServiceError(detail="Internal Service Error.")
 
-        return result.data
+        finally:
+            self.end_time = local_time()
+            logging.info("Finished LLM process.")
+            logging.info(f"Elapsed time: {self.end_time-self.start_time}")
