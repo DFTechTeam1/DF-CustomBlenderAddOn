@@ -25,7 +25,7 @@ case "$1" in
   --development)
     echo "Using development environment configuration"
     ENV_FILE="env/.env.development"
-    HOST="127.0.0.1"
+    HOST="0.0.0.0"
     ;;
   --staging)
     echo "Using staging environment configuration"

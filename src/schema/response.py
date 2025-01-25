@@ -1,5 +1,6 @@
-from typing import Optional, Any
-from pydantic import BaseModel
+from typing import Optional, Any, Dict, List
+from pydantic import BaseModel, field_validator
+from src.schema.validator import LLMVResponseValidatorMixin
 
 
 class ServerStatus(BaseModel):
@@ -7,11 +8,21 @@ class ServerStatus(BaseModel):
 
 
 class ResponseCluster3DModel(BaseModel):
-    data: Optional[dict] = None
+    data: Optional[Dict[str, List[str]]] = None
+
+    @field_validator("data")
+    @classmethod
+    def validate_pin(cls, data: dict) -> dict:
+        return LLMVResponseValidatorMixin.validate_response(response=data)
 
 
 class ResponsePythonCodeGenerator(BaseModel):
-    data: str = None
+    data: Optional[str] = None
+
+    @field_validator("data")
+    @classmethod
+    def validate_pin(cls, data: str) -> str:
+        return LLMVResponseValidatorMixin.validate_response(response=data)
 
 
 class ResponseDefault(BaseModel):

@@ -27,7 +27,8 @@ async def auto_cluster_endpoint(schema: ModelData) -> ResponseDefault:
         response.data = clustered_data
     except BaseErrorCustomBlenderAddOn:
         raise
-    except Exception:
+    except Exception as e:
+        logging.error(f"Auto Cluster Error: {e}")
         raise ServiceError(detail="Internal Service Error.")
     return response
 
