@@ -23,9 +23,7 @@ class CustomOllama:
     def to_str(self, data: list) -> str:
         unique_values = set(data)
         convert_to_list = list(unique_values)
-
         logging.info(f"Clustering {len(convert_to_list)} unique object.")
-
         return str(convert_to_list)
 
     def prompt(self, custom_template: str, **kwargs: Any) -> str:
@@ -34,7 +32,6 @@ class CustomOllama:
 
     def format_response(self, data: dict) -> dict:
         formatted_response = {}
-
         for key, value in data.items():
             formatted_key = key.lower().replace(" ", "_")
             formatted_value = [entry.lower().replace(" ", "_") for entry in value]

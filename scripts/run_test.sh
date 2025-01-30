@@ -63,8 +63,24 @@ if [ -z "$TEST_DIR" ]; then
   exit 1
 fi
 
-# Export the environment file for Python
+# Extract IP_HOST from the ENV_FILE
+if [ -f "$ENV_FILE" ]; then
+  IP_HOST=$(grep -E '^IP_HOST=' "$ENV_FILE" | cut -d '=' -f 2)
+  if [ -z "$IP_HOST" ]; then
+    echo "Error: IP_HOST not found in $ENV_FILE."
+    exit 1
+  fi
+  # Remove double quotes from IP_HOST
+  IP_HOST=$(echo "$IP_HOST" | tr -d '"')
+else
+  echo "Error: Environment file $ENV_FILE not found."
+  exit 1
+fi
+
+
+# Export the environment file and IP_HOST for Python
 export ENV_FILE="$ENV_FILE"
+export IP_HOST="$IP_HOST"
 
 # Checking OS Environment
 echo "Checking OS Environment"
@@ -92,9 +108,8 @@ else
   esac
 fi
 
-
 # Run the tests
-echo "Running tests in $TEST_DIR on $ENV_FILE environment"
+echo "Running tests in $TEST_DIR on $ENV_FILE environment with IP_HOST=$IP_HOST"
 if ! coverage run -m --source=$TEST_DIR pytest $TEST_DIR; then
   echo "Tests failed!"
   exit 1

@@ -16,3 +16,4 @@ class Config:
     MIDDLEWARE_SECRET_KEY = os.getenv("MIDDLEWARE_SECRET_KEY")
     OLLAMA_VERSION = os.getenv("OLLAMA_VERSION")
     OLLAMA_URL = os.getenv("OLLAMA_URL")
+    IP_HOST = os.getenv("IP_HOST")
