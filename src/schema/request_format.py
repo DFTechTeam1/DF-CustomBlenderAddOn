@@ -1,15 +1,15 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, Field
 from src.schema.validator import UserInputValidatorMixin
 
 
 class Temperature(BaseModel):
-    temperature: float = 0.3
+    temperature: float = Field(default=0.1, ge=0.0, le=1.0)
 
 
-class ModelData(Temperature):
-    model: list = None
+class AutoClusterRequest(Temperature):
+    object_name: list = None
 
-    @field_validator("model")
+    @field_validator("object_name")
     @classmethod
     def validate_model(cls, model: list) -> list:
         return UserInputValidatorMixin.validate_request(user_input=model)

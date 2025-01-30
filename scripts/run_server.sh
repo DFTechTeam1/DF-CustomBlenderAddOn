@@ -1,9 +1,5 @@
 #!/bin/sh
 
-# Default value
-HOST="127.0.0.1"
-ENV_FILE="env/.env.development"
-
 # Show usage information
 show_help() {
   echo "Usage: sh $0 [ --development | --staging | --production | --help ]"
@@ -25,27 +21,20 @@ case "$1" in
   --development)
     echo "Using development environment configuration"
     ENV_FILE="env/.env.development"
-    HOST="0.0.0.0"
+    HOST="127.0.0.1"
+    DEBUG_MODE="--reload --reload-dir=src"
     ;;
   --staging)
     echo "Using staging environment configuration"
     ENV_FILE="env/.env.staging"
-    CURRENT_IP=$(hostname -I | awk '{print $1}')
-    if [ -z "$CURRENT_IP" ]; then
-      echo "Unable to detect current IP address! Using default host"
-    else
-      HOST="$CURRENT_IP"
-    fi
+    HOST="0.0.0.0"
+    DEBUG_MODE=""
     ;;
   --production)
     echo "Using production environment configuration"
-    CURRENT_IP=$(hostname -I | awk '{print $1}')
-    if [ -z "$CURRENT_IP" ]; then
-      echo "Unable to detect current IP address! Using default host"
-    else
-      HOST="$CURRENT_IP"
-    fi
     ENV_FILE="env/.env.production"
+    HOST="0.0.0.0"
+    DEBUG_MODE=""
     ;;
   *)
     echo "Invalid option: $1"
@@ -54,9 +43,9 @@ case "$1" in
     ;;
 esac
 
-#Load the environment variables using the external script
+# Load the environment variables using the external script
 export ENV_FILE
-sh ./scripts/load_env.sh
+sh scripts/load_env.sh
 
 # Checking OS Environment
 echo "Checking OS Environment"
@@ -78,12 +67,12 @@ else
       source .venv/Scripts/activate
       ;;
     *)
-      echo "Unsupported OS."
+      echo "Unsupported OS. Please activate venv and run the server manually."
       exit 1
       ;;
   esac
 fi
 
 # Start the server
-echo "Running uvicorn server in debug mode"
-uvicorn src.main:app --host "$HOST" --port 8000 --reload --reload-dir=src
+echo "Running uvicorn server"
+uvicorn src.main:app --host "$HOST" --port 8000 $DEBUG_MODE

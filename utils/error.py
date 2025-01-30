@@ -48,3 +48,9 @@ class InvalidOperationError(BaseErrorCustomBlenderAddOn):
     """Error operation is invalid."""
 
     pass
+
+
+class LLMParserError(BaseErrorCustomBlenderAddOn):
+    """Error from LLM parser."""
+
+    pass

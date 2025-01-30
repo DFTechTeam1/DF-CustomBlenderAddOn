@@ -3,9 +3,10 @@ from typing import Any, Union
 from pydantic import BaseModel
 from utils.logger import logging
 from utils.helper import local_time
-from utils.error import ServiceError
+from utils.error import ServiceError, LLMParserError
 from langchain_core.prompts import PromptTemplate
 from src.schema.response import ResponseCluster3DModel, ResponsePythonCodeGenerator
+from src.schema.validator import LLMVResponseValidatorMixin
 
 
 class CustomOllama:
@@ -20,12 +21,25 @@ class CustomOllama:
         self.self_end_time = None
 
     def to_str(self, data: list) -> str:
-        logging.info(f"Clustering {len(data)} object.")
-        return str(data)
+        unique_values = set(data)
+        convert_to_list = list(unique_values)
+
+        logging.info(f"Clustering {len(convert_to_list)} unique object.")
+
+        return str(convert_to_list)
 
     def prompt(self, custom_template: str, **kwargs: Any) -> str:
         prompt = PromptTemplate.from_template(template=custom_template)
         return prompt.format(**kwargs)
+
+    def format_response(self, data: dict) -> dict:
+        formatted_response = {}
+
+        for key, value in data.items():
+            formatted_key = key.lower().replace(" ", "_")
+            formatted_value = [entry.lower().replace(" ", "_") for entry in value]
+            formatted_response[formatted_key] = formatted_value
+        return formatted_response
 
     async def execute(
         self,
@@ -46,11 +60,21 @@ class CustomOllama:
             result = response_model.model_validate_json(response.message.content)
 
             if response_model is ResponsePythonCodeGenerator:
-                return result.data.strip()
+                response = LLMVResponseValidatorMixin.validate_response(
+                    response=result.data.strip(), task_type="code"
+                )
+                return response
             elif response_model is ResponseCluster3DModel:
-                return result.data
+                response = LLMVResponseValidatorMixin.validate_response(
+                    response=result.data, task_type="cluster"
+                )
+                response = self.format_response(data=response)
+                return response
             else:
                 raise ValueError("Unsupported response model type.")
+
+        except LLMParserError:
+            raise
 
         except Exception as e:
             logging.error(f"Error LLM: {e}")

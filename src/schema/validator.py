@@ -1,5 +1,6 @@
-from typing import Union
-from utils.error import InvalidOperationError
+from typing import Union, Literal
+from utils.logger import logging
+from utils.error import InvalidOperationError, LLMParserError
 
 
 class UserInputValidatorMixin:
@@ -12,18 +13,29 @@ class UserInputValidatorMixin:
 
 class LLMVResponseValidatorMixin:
     @classmethod
-    def validate_response(cls, response: Union[dict, str]) -> Union[dict, str]:
+    def validate_response(
+        cls, response: Union[dict, str], task_type: Literal["cluster", "code"]
+    ) -> Union[dict, str]:
         if not response:
-            raise InvalidOperationError(
-                detail="LLM Parsing Error: Response cannot be empty."
-            )
+            logging.error("LLM response empty.")
+            raise LLMParserError(detail="LLM response format is invalid.")
 
-        for key, value in response.items():
-            if not (
-                isinstance(value, list)
-                and all(isinstance(item, (str, dict)) for item in value)
-            ):
-                raise InvalidOperationError(
-                    detail=f"LLM Parsing Error: Invalid format for key '{key}' in 'data'."
-                )
+        if task_type == "cluster":
+            for key, value in response.items():
+                if not isinstance(key, str):
+                    logging.error(f"Key {key} must be a string.")
+                    raise LLMParserError(detail="LLM response format is invalid.")
+
+                if not isinstance(value, list):
+                    logging.error(f"Value for key {key} must be a list.")
+                    raise LLMParserError(detail="LLM response format is invalid.")
+
+                if not all(isinstance(entry, str) for entry in value):
+                    logging.error(f"All elements in the list of {key} must be strings.")
+                    raise LLMParserError(detail="LLM response format is invalid.")
+        else:
+            if not isinstance(response, str):
+                logging.error("Response must be a string.")
+                raise LLMParserError(detail="LLM response format is invalid.")
+
         return response

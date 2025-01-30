@@ -1,5 +1,10 @@
 from fastapi import status, FastAPI
-from utils.error import create_exception_handler, ServiceError, InvalidOperationError
+from utils.error import (
+    create_exception_handler,
+    ServiceError,
+    InvalidOperationError,
+    LLMParserError,
+)
 
 
 def register_exception_handlers(app: FastAPI) -> None:
@@ -15,5 +20,13 @@ def register_exception_handlers(app: FastAPI) -> None:
         handler=create_exception_handler(
             status.HTTP_400_BAD_REQUEST,
             "Operation invalid.",
+        ),
+    )
+
+    app.add_exception_handler(
+        exc_class_or_status_code=LLMParserError,
+        handler=create_exception_handler(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            "LLM response error.",
         ),
     )
