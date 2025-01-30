@@ -1,8 +1,9 @@
 from ollama import chat
-from typing import Any, Union
+from datetime import datetime
 from pydantic import BaseModel
 from utils.logger import logging
 from utils.helper import local_time
+from typing import Any, Union, Optional
 from utils.error import ServiceError, LLMParserError
 from langchain_core.prompts import PromptTemplate
 from src.schema.response import ResponseCluster3DModel, ResponsePythonCodeGenerator
@@ -15,10 +16,10 @@ class CustomOllama:
         model_name: str = "mistral:7b-instruct",
         temperature: float = 0.1,
     ):
-        self.temperature = temperature
-        self.model_name = model_name
-        self.start_time = None
-        self.self_end_time = None
+        self.temperature: float = temperature
+        self.model_name: str = model_name
+        self.start_time: Optional[datetime] = None
+        self.self_end_time: Optional[datetime] = None
 
     def to_str(self, data: list) -> str:
         unique_values = set(data)

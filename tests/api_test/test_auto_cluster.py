@@ -83,6 +83,5 @@ async def test_cluster_3D_object_with_invalid_llm_response() -> None:
 async def test_cluster_3D_object_with_none_llm_response() -> None:
     """Should raise LLMParserError when LLM response format is None."""
     mock_llm_response = None
-
     with pytest.raises(LLMParserError):
         ResponseCluster3DModel.validate_llm_response(data=mock_llm_response)
