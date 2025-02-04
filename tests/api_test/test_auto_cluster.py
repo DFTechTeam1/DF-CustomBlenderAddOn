@@ -68,7 +68,7 @@ async def test_cluster_3d_object_with_invalid_temperature_payload() -> None:
 
 @pytest.mark.asyncio
 async def test_cluster_3D_object_with_invalid_llm_response() -> None:
-    """Should raise LLMParserError when LLM response format is invalid."""
+    """Should raise LLMParserError when Invalid LLM response."""
     mock_llm_response = {
         "Steampunk & Victorian": {
             "steampunk_airship": ["steampunk_building", "steampunk_lamp"]

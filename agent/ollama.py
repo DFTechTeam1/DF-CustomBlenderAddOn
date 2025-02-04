@@ -1,4 +1,5 @@
-from ollama import chat
+from ollama import Client
+from src.secret import Config
 from datetime import datetime
 from pydantic import BaseModel
 from utils.logger import logging
@@ -9,6 +10,7 @@ from langchain_core.prompts import PromptTemplate
 from src.schema.response import ResponseCluster3DModel, ResponsePythonCodeGenerator
 from src.schema.validator import LLMVResponseValidatorMixin
 
+config = Config()
 
 class CustomOllama:
     def __init__(
@@ -20,6 +22,7 @@ class CustomOllama:
         self.model_name: str = model_name
         self.start_time: Optional[datetime] = None
         self.self_end_time: Optional[datetime] = None
+        self.client = Client(host=config.OLLAMA_URL)
 
     def to_str(self, data: list) -> str:
         unique_values = set(data)
@@ -48,7 +51,7 @@ class CustomOllama:
             self.start_time = local_time()
             logging.info("Starting LLM process.")
 
-            response = chat(
+            response = self.client.chat(
                 messages=[{"role": "user", "content": custom_prompt}],
                 model=self.model_name,
                 format=response_model.model_json_schema(),

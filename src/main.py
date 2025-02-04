@@ -28,5 +28,5 @@ app.add_middleware(
 register_exception_handlers(app=app)
 app.add_middleware(SessionMiddleware, secret_key=config.MIDDLEWARE_SECRET_KEY)
 app.include_router(health_check.router)
-app.include_router(code_generator.router)
+# app.include_router(code_generator.router)
 app.include_router(auto_cluster.router)
