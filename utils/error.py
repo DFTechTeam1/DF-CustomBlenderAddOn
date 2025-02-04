@@ -44,13 +44,13 @@ class ServiceError(BaseErrorCustomBlenderAddOn):
     pass
 
 
-class DataNotFoundError(BaseErrorCustomBlenderAddOn):
-    """Error occurred when target data not found."""
+class InvalidOperationError(BaseErrorCustomBlenderAddOn):
+    """Error operation is invalid."""
 
     pass
 
 
-class ServicesConnectionError(BaseErrorCustomBlenderAddOn):
-    """Error occurred when try to connecting third party services."""
+class LLMParserError(BaseErrorCustomBlenderAddOn):
+    """Error from LLM parser."""
 
     pass

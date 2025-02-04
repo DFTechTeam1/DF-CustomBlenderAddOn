@@ -1,12 +1,16 @@
-from ollama import chat
+from ollama import Client
+from src.secret import Config
 from datetime import datetime
+from pydantic import BaseModel
 from utils.logger import logging
-from typing import Optional, Any
 from utils.helper import local_time
-from utils.error import ServiceError
+from typing import Any, Union, Optional
+from utils.error import ServiceError, LLMParserError
 from langchain_core.prompts import PromptTemplate
-from src.schema.response import ResponseLLM
+from src.schema.response import ResponseCluster3DModel, ResponsePythonCodeGenerator
+from src.schema.validator import LLMVResponseValidatorMixin
 
+config = Config()
 
 class CustomOllama:
     def __init__(
@@ -14,37 +18,70 @@ class CustomOllama:
         model_name: str = "mistral:7b-instruct",
         temperature: float = 0.1,
     ):
-        self.temperature = temperature
-        self.model_name = model_name
+        self.temperature: float = temperature
+        self.model_name: str = model_name
         self.start_time: Optional[datetime] = None
         self.self_end_time: Optional[datetime] = None
+        self.client = Client(host=config.OLLAMA_URL)
 
     def to_str(self, data: list) -> str:
-        return str(data)
+        unique_values = set(data)
+        convert_to_list = list(unique_values)
+        logging.info(f"Clustering {len(convert_to_list)} unique object.")
+        return str(convert_to_list)
 
     def prompt(self, custom_template: str, **kwargs: Any) -> str:
         prompt = PromptTemplate.from_template(template=custom_template)
         return prompt.format(**kwargs)
 
-    async def cluster_models(self, custom_prompt: str) -> dict:
-        try:
-            start_time = local_time()
-            logging.info("Starting clustering process.")
+    def format_response(self, data: dict) -> dict:
+        formatted_response = {}
+        for key, value in data.items():
+            formatted_key = key.lower().replace(" ", "_")
+            formatted_value = [entry.lower().replace(" ", "_") for entry in value]
+            formatted_response[formatted_key] = formatted_value
+        return formatted_response
 
-            response = chat(
+    async def execute(
+        self,
+        custom_prompt: str,
+        response_model: type[BaseModel],
+    ) -> Union[dict, str]:
+        try:
+            self.start_time = local_time()
+            logging.info("Starting LLM process.")
+
+            response = self.client.chat(
                 messages=[{"role": "user", "content": custom_prompt}],
                 model=self.model_name,
-                format=ResponseLLM.model_json_schema(),
+                format=response_model.model_json_schema(),
                 options={"temperature": self.temperature},
             )
 
-            result = ResponseLLM.model_validate_json(response.message.content)
+            result = response_model.model_validate_json(response.message.content)
 
-            end_time = local_time()
-            logging.info("Finished clustering proceess.")
-            logging.info(f"Elapsed time: {end_time-start_time}")
+            if response_model is ResponsePythonCodeGenerator:
+                response = LLMVResponseValidatorMixin.validate_response(
+                    response=result.data.strip(), task_type="code"
+                )
+                return response
+            elif response_model is ResponseCluster3DModel:
+                response = LLMVResponseValidatorMixin.validate_response(
+                    response=result.data, task_type="cluster"
+                )
+                response = self.format_response(data=response)
+                return response
+            else:
+                raise ValueError("Unsupported response model type.")
+
+        except LLMParserError:
+            raise
+
         except Exception as e:
-            logging.error(f"Error clustering 3D models: {e}")
+            logging.error(f"Error LLM: {e}")
             raise ServiceError(detail="Internal Service Error.")
 
-        return result.data
+        finally:
+            self.end_time = local_time()
+            logging.info("Finished LLM process.")
+            logging.info(f"Elapsed time: {self.end_time-self.start_time}")

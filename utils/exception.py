@@ -2,8 +2,8 @@ from fastapi import status, FastAPI
 from utils.error import (
     create_exception_handler,
     ServiceError,
-    DataNotFoundError,
-    ServicesConnectionError,
+    InvalidOperationError,
+    LLMParserError,
 )
 
 
@@ -16,16 +16,17 @@ def register_exception_handlers(app: FastAPI) -> None:
     )
 
     app.add_exception_handler(
-        exc_class_or_status_code=DataNotFoundError,
+        exc_class_or_status_code=InvalidOperationError,
         handler=create_exception_handler(
-            status.HTTP_404_NOT_FOUND,
-            "Data not found.",
+            status.HTTP_400_BAD_REQUEST,
+            "Operation invalid.",
         ),
     )
 
     app.add_exception_handler(
-        exc_class_or_status_code=ServicesConnectionError,
+        exc_class_or_status_code=LLMParserError,
         handler=create_exception_handler(
-            status.HTTP_503_SERVICE_UNAVAILABLE, "Service connection error."
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            "LLM response error.",
         ),
     )
