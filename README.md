@@ -6,9 +6,7 @@ Custom Blender Add-On developed for supporing production of DFactory team, lever
 ├──agent\                   # Folder for configuring Open Source LLM codebase.
 ├──logs\                    # Folder for storing FastAPI server logs.
 ├──script\                  # Folder for shell scripts to automate tasks.
-│   ├──activate.sh          # Script to activate virtual environment.
-│   ├──load_env.sh          # Script to dynamically load environment.
-│   ├──run_container.sh     # Script to turn on third party services based on dynamic environment.
+│   ├──run_test.sh          # Script to start the FastAPI testing based on dynamic environment.
 │   ├──run_server.sh        # Script to start the FastAPI server based on dynamic environment.
 │   ├──setup.sh             # Script to install and configure project dependencies.
 ├──src\                     # Main folder containing the core application code.
@@ -31,36 +29,26 @@ This project is developed using Windows 11 with Python v3.12.3. To get started, 
 
 ## Prerequisites
 
-- **Python** (Recomendation: 3.12.3)
+- **Python** (Recomendation: 3.12+)
 - **Docker**
 - **Poetry**
 
 ## Setup steps
 
-1. **Run setup script**
+1. **Build docker images**
     ```
-    sh scripts/setup.sh
-    ```
-
-2. **Run Container Services**
-    ```
-    sh scripts/run_container.sh
+    docker build -t custom-blender-addon .
     ```
 
-2. **Run Backend Services**
+2. **Run docker images**
     ```
-    sh scripts/run_services.sh
-    ```
-
-4. **Access Backend Service via IP Address**
-    ```
-    http://{ip_address}:8000/docs
+    docker run --name=custom-blender-dev -p 10000:10000 custom-blender-addon --development
     ```
 
-## Notes
-- Ensure to configures the virtual environment and installs all necessary dependencies via scripts/setup.sh.
-- Ensure that you already run the API services dependencies via scripts/run_container.sh.
-- The scripts/run_server.sh script starts the backend server.
+3. **Access Backend Service via IP Address**
+    ```
+    http://{ip_address}:11000/docs
+    ```
 
 
 # Repo Owner? #
