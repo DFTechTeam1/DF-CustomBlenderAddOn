@@ -3,7 +3,7 @@ from src.schema.validator import UserInputValidatorMixin
 
 
 class Temperature(BaseModel):
-    temperature: float = Field(default=0.1, ge=0.0, le=1.0)
+    temperature: float = Field(default=0.1, ge=0.1, le=1.0)
 
 
 class AutoClusterRequest(Temperature):
