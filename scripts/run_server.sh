@@ -21,7 +21,7 @@ case "$1" in
   --development)
     echo "Using development environment configuration"
     ENV_FILE="env/.env.development"
-    HOST="127.0.0.1"
+    HOST="0.0.0.0"
     DEBUG_MODE="--reload --reload-dir=src"
     ;;
   --staging)
