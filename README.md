@@ -6,9 +6,7 @@ Custom Blender Add-On developed for supporing production of DFactory team, lever
 ├──agent\                   # Folder for configuring Open Source LLM codebase.
 ├──logs\                    # Folder for storing FastAPI server logs.
 ├──script\                  # Folder for shell scripts to automate tasks.
-│   ├──activate.sh          # Script to activate virtual environment.
-│   ├──load_env.sh          # Script to dynamically load environment.
-│   ├──run_container.sh     # Script to turn on third party services based on dynamic environment.
+│   ├──run_test.sh          # Script to start the FastAPI testing based on dynamic environment.
 │   ├──run_server.sh        # Script to start the FastAPI server based on dynamic environment.
 │   ├──setup.sh             # Script to install and configure project dependencies.
 ├──src\                     # Main folder containing the core application code.

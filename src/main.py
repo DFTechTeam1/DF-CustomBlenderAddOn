@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from src.secret import Config
 from utils.exception import register_exception_handlers
 from src.routers import health_check
-from src.routers.automation import auto_cluster, code_generator
+from src.routers.automation import auto_cluster
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 

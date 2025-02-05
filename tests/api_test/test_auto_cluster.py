@@ -5,7 +5,6 @@ from utils.error import LLMParserError
 from src.schema.response import ResponseCluster3DModel
 
 config = Config()
-IP_HOST = config.IP_HOST
 
 
 @pytest.mark.asyncio
@@ -24,7 +23,7 @@ async def test_cluster_3d_object_with_valid_payload():
     }
 
     async with httpx.AsyncClient(
-        base_url=f"http://{IP_HOST}:8000", timeout=300
+        base_url=f"http://{config.IP_HOST}:{config.BACKEND_PORT}", timeout=300
     ) as client:
         response = await client.post("/auto/cluster-object", json=request_payload)
         response.status_code == 200
@@ -42,7 +41,7 @@ async def test_cluster_3d_object_with_empty_object_payload() -> None:
     }
 
     async with httpx.AsyncClient(
-        base_url=f"http://{IP_HOST}:8000", timeout=300
+        base_url=f"http://{config.IP_HOST}:{config.BACKEND_PORT}", timeout=300
     ) as client:
         response = await client.post("/auto/cluster-object", json=request_payload)
         response.status_code == 400
@@ -60,7 +59,7 @@ async def test_cluster_3d_object_with_invalid_temperature_payload() -> None:
     }
 
     async with httpx.AsyncClient(
-        base_url=f"http://{IP_HOST}:8000", timeout=300
+        base_url=f"http://{config.IP_HOST}:{config.BACKEND_PORT}", timeout=300
     ) as client:
         response = await client.post("/auto/cluster-object", json=request_payload)
         response.status_code == 422

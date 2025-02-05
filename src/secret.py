@@ -17,3 +17,4 @@ class Config:
     OLLAMA_VERSION = os.getenv("OLLAMA_VERSION")
     OLLAMA_URL = os.getenv("OLLAMA_URL")
     IP_HOST = os.getenv("IP_HOST")
+    BACKEND_PORT = os.getenv("BACKEND_PORT")

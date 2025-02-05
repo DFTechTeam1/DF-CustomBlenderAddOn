@@ -45,7 +45,21 @@ esac
 
 # Load the environment variables using the external script
 export ENV_FILE
-sh scripts/load_env.sh
+
+if [ -f "$ENV_FILE" ]; then
+  echo "Loading environment variables from $ENV_FILE"
+  export $(grep -v '^#' "$ENV_FILE" | xargs)
+else
+  echo "Environment file $ENV_FILE not found!"
+  exit 1
+fi
+
+# Check if BACKEND_PORT is set in the ENV_FILE
+if [ -z "$BACKEND_PORT" ]; then
+  echo "BACKEND_PORT not found in $ENV_FILE, defaulting to port 8000"
+  BACKEND_PORT=8000
+fi
+
 
 # Checking OS Environment
 echo "Checking OS Environment"
@@ -75,4 +89,4 @@ fi
 
 # Start the server
 echo "Running uvicorn server"
-uvicorn src.main:app --host "$HOST" --port 8000 $DEBUG_MODE
+uvicorn src.main:app --host "$HOST" --port "$BACKEND_PORT" $DEBUG_MODE
