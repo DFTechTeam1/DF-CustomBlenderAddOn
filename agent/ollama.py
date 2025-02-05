@@ -35,11 +35,25 @@ class CustomOllama:
         return prompt.format(**kwargs)
 
     def format_response(self, data: dict) -> dict:
+
         formatted_response = {}
+        seen = set()
+
         for key, value in data.items():
-            formatted_key = key.lower().replace(" ", "_")
-            formatted_value = [entry.lower().replace(" ", "_") for entry in value]
+            formatted_key = key.lower()
+            formatted_key = formatted_key.replace(" ", "_") if " " in formatted_key else formatted_key
+            formatted_value = []
+
+            for entry in value:
+                formatted_entry = entry.lower()
+                formatted_entry = formatted_entry.replace(" ", "_") if " " in formatted_entry else formatted_entry
+
+                if formatted_entry not in seen:
+                    formatted_value.append(formatted_entry)
+                    seen.add(formatted_entry)
+
             formatted_response[formatted_key] = formatted_value
+
         return formatted_response
 
     async def execute(
