@@ -47,7 +47,7 @@ This project is developed using Windows 11 with Python v3.12.3. To get started, 
 
 3. **Access Backend Service via IP Address**
     ```
-    http://{ip_address}:11000/docs
+    http://{ip_address}:10000/docs
     ```
 
 

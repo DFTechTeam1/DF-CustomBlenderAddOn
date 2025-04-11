@@ -15,7 +15,8 @@ async def auto_cluster_endpoint(schema: AutoClusterRequest) -> ResponseDefault:
     ollama = CustomOllama(temperature=schema.temperature)
 
     try:
-        formatted_data = ollama.to_str(data=schema.object_name)
+        formatted_data = ollama.to_str(data=schema.object_name).lower()
+        print(formatted_data)
         formatted_prompt = ollama.prompt(
             custom_template=cluster_template, object_data=formatted_data
         )
